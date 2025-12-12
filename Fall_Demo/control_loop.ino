@@ -83,7 +83,7 @@ Adafruit_VL6180X tof_right = Adafruit_VL6180X();
 /* ===================== BEHAVIOR THRESHOLDS ===================== */
 
 // Front wall detection
-const int FRONT_WALL_MM       = 80;  // if closer than this → turn left
+const int FRONT_WALL_MM       = 80; 
 
 // Right wall following
 const int RIGHT_TOO_CLOSE_MM  = 40;  
@@ -117,9 +117,9 @@ void computeMotionParameters() {
 
 void setSensorAddress(uint8_t oldAddress, uint8_t newAddress) {
   Wire.beginTransmission(oldAddress);
-  Wire.write((VL6180X_SLAVE_ADDRESS >> 8) & 0xFF); // MSB
-  Wire.write(VL6180X_SLAVE_ADDRESS & 0xFF);        // LSB
-  Wire.write(newAddress << 1);                     // new address (7-bit << 1)
+  Wire.write((VL6180X_SLAVE_ADDRESS >> 8) & 0xFF); 
+  Wire.write(VL6180X_SLAVE_ADDRESS & 0xFF);       
+  Wire.write(newAddress << 1);                    
   Wire.endTransmission();
   delay(5);
 }
@@ -337,7 +337,7 @@ void loop() {
   if (front < FRONT_WALL_MM) {
     Serial.println("Corner detected → turn left 90°");
     turnLeft90_enc();
-    return;  // skip rest of loop this cycle
+    return;  
   }
 
   // 2) Right wall following
