@@ -1,14 +1,14 @@
 /*
- * Project: UMBC Micromouse Capstone - Fall Demo
- * File: Initial_Demo.ino
- * * Description:
- * This sketch implements an autonomous control system for a differential drive 
- * robot. It utilizes quadrature encoder feedback with a Proportional (P) 
- * controller to synchronize wheel speeds, correcting for drift to maintain a 
- * straight path. Additionally, it integrates an Adafruit VL6180X Time-of-Flight 
- * (ToF) sensor to continuously monitor the environment, automatically halting 
- * the motors when an obstacle is detected within a predefined threshold.
- */
+ Project: UMBC Micromouse Capstone - Fall Demo
+ File: Initial_Demo.ino
+ Description:
+ * This sketch implements an autonomous control system for a differential drive robot. 
+ * It utilizes encoder feedback with a Proportional (P) controller to synchronize wheel speeds,
+   correcting for drift to maintain a straight path. 
+  * It integrates an Adafruit VL6180X Time-of-Flight (ToF) sensor to continuously monitor the environment,
+   automatically halting  the motors when an obstacle is detected within a predefined threshold. */
+
+                                                                                                 
 
 #include <Arduino.h>
 #include <Wire.h>
