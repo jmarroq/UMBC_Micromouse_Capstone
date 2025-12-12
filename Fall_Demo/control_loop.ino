@@ -14,7 +14,7 @@
 
 /* ===================== PIN DEFINITIONS ===================== */
 
-// Motors (N20 + L298N)
+// Motor Driver
 #define PWMA 11   // Left PWM
 #define AIN1 6
 #define AIN2 7
