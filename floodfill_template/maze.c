@@ -1,11 +1,12 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "maze.h"
+
 /* Node Constructor */
 Cell * new_Cell (const short i, const short j) {
 
     Cell * this_cell;
     short halfsize;
-  
-    if (debug_on)
-      printf("allocating %hd, %hd\n", i, j);
   
     this_cell = (Cell *) malloc(sizeof(Cell));
     halfsize = SIZE / 2;
@@ -17,16 +18,16 @@ Cell * new_Cell (const short i, const short j) {
     /* Initializing the flood value at this coord
             NOTE : Right now this only works when SIZE is even -- which is ok */
     if (i < halfsize && j < halfsize)
-      FLOODVAL = (halfsize - 1 - i) + (halfsize - 1 - j) ;
+      M_DISTANCE = (halfsize - 1 - i) + (halfsize - 1 - j) ;
   
     else if (i < halfsize && j >= halfsize)
-      FLOODVAL = (halfsize - 1 - i) + (j - halfsize) ;
+    M_DISTANCE = (halfsize - 1 - i) + (j - halfsize) ;
   
     else if (i >= halfsize && j < halfsize)
-      FLOODVAL = (i - halfsize) + (halfsize - 1 - j) ;
+    M_DISTANCE = (i - halfsize) + (halfsize - 1 - j) ;
   
     else
-      FLOODVAL = (i - halfsize) + (j - halfsize) ;
+    M_DISTANCE = (i - halfsize) + (j - halfsize) ;
   
     return this_cell;
   }
@@ -60,8 +61,8 @@ Cell * new_Cell (const short i, const short j) {
   void delete_Cell (Cell ** npp) {
 	
     /* debug statements */
-    if (debug_on) 
-      printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
+    // if (debug_on) 
+    //   printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
   
     free (*npp);
     *npp = 0;

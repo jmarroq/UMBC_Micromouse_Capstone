@@ -1,7 +1,9 @@
-#ifndef Maze_h
-#define Maze_h
+#ifndef maze_h
+#define maze_h
 
 #define SIZE 16			// Size of one dimention of Map
+#define TRUE 1
+#define FALSE 0
 // Directions
 #define NORTH 0
 #define EAST 1
@@ -11,9 +13,9 @@
 // Shortcut Constants
 #define MAPIJ this_maze->map[i][j]
 #define MAP this_maze->map
-#define FLOODVAL this_cell->floodval
-#define ROW this_cell->row
-#define COL this_cell->column
+#define M_DISTANCE this_cell->m_distance
+#define ROW this_cell->pos_x
+#define COL this_cell->pos_y
 #define VISITED this_cell->visited
 #define LEFT this_cell->left
 #define RIGHT this_cell->right
@@ -21,7 +23,7 @@
 #define DOWN this_cell->down
 
 
-typedef struct Cell { 
+typedef struct Cell{ 
     /* data fields */
     short m_distance;
     short pos_x;
@@ -35,16 +37,16 @@ typedef struct Cell {
     struct Cell * down;
   
   } 
-  Node;
+  Cell;
   
   typedef struct Maze {
   
-    Node * map [SIZE][SIZE];	
+    Cell * map [SIZE][SIZE];	
   } 
   Maze;
 
   // Node Functions
-Node * new_Cell (const short i, const short j);
+Cell * new_Cell (const short i, const short j);
 void delete_Cell (Cell ** npp);
 void flood_fill (Cell * this_cell, Stack * this_stack, const short reflood_flag);
 void set_wall (Cell * this_cell, const short dir);
@@ -63,3 +65,5 @@ void push_open_neighbors (Cell * this_cell, Stack * this_stack);
 Maze * new_Maze ();
 void delete_Maze (Maze ** mpp);
 void print_map (const Maze * this_maze);
+
+#endif
