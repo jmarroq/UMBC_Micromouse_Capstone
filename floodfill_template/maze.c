@@ -1,13 +1,13 @@
 /* Node Constructor */
-Node * new_Node (const short i, const short j) {
+Cell * new_Cell (const short i, const short j) {
 
-    Node * this_node;
+    Cell * this_cell;
     short halfsize;
   
     if (debug_on)
       printf("allocating %hd, %hd\n", i, j);
   
-    this_node = (Node *) malloc(sizeof(Node));
+    this_cell = (Cell *) malloc(sizeof(Cell));
     halfsize = SIZE / 2;
   
     ROW = i;
@@ -28,7 +28,7 @@ Node * new_Node (const short i, const short j) {
     else
       FLOODVAL = (i - halfsize) + (j - halfsize) ;
   
-    return this_node;
+    return this_cell;
   }
   
   
@@ -55,4 +55,26 @@ Node * new_Node (const short i, const short j) {
       }
   
     return this_maze;
+  }
+
+  void delete_Cell (Cell ** npp) {
+	
+    /* debug statements */
+    if (debug_on) 
+      printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
+  
+    free (*npp);
+    *npp = 0;
+  }
+
+  void delete_Maze (Maze ** mpp) {
+
+    short i, j;
+  
+    for (i = 0; i < SIZE; i++) 
+      for (j = 0; j < SIZE; j++) 
+        delete_Node (&((*mpp)->map[i][j])); 
+      
+    free(*mpp);
+    *mpp = 0;
   }
