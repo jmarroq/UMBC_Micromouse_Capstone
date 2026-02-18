@@ -118,13 +118,17 @@ void iface_reflood_from_current(Maze* maze, const Pose* pose, int reflood_flag) 
   Stack* s = new_Stack();
   push(s, cur);
 
-  while (!isEmpty(s)) {
-    Node* n = pop(s);
-    flood_fill(n, s, (short)reflood_flag);
+  while (!is_empty_Stack(s)) {
+    Node* n = NULL;
+    pop(s, &n);
+    if (n) {
+      flood_fill(n, s, (short)reflood_flag);
+    }
   }
 
   delete_Stack(&s);
 }
+
 
 int iface_choose_next_dir(Maze* maze, const Pose* pose) {
   Node* cur = node_at(maze, pose->x, pose->y);
