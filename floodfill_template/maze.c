@@ -58,20 +58,13 @@ Cell * new_Cell (const short i, const short j) {
     return this_maze;
   }
 
-  void delete_Cell (Cell ** npp) {
-	
-    /* debug statements */
-    // if (debug_on) 
-    //   printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
-  
+  void delete_Cell (Cell ** npp) {  
     free (*npp);
     *npp = 0;
   }
 
   void delete_Maze (Maze ** mpp) {
-
     short i, j;
-  
     for (i = 0; i < SIZE; i++) 
       for (j = 0; j < SIZE; j++) 
         delete_Node (&((*mpp)->map[i][j])); 
