@@ -10,6 +10,16 @@
 #define SOUTH 2
 #define WEST 3
 
+// Stack Constants
+#define SPI 1			// Stack Pointer Index
+#define SSI 0 			// Stack Size Index
+#define STACK_OFFSET 2
+#define STACKSIZE 80
+
+#define START_X 15
+#define START_Y 0
+#define LARGEVAL 301
+
 // Shortcut Constants
 #define MAPIJ this_maze->map[i][j]
 #define MAP this_maze->map
@@ -35,16 +45,20 @@ typedef struct Cell{
     struct Cell * right;
     struct Cell * up;
     struct Cell * down;
-  
   } 
   Cell;
   
   typedef struct Maze {
-  
     Cell * map [SIZE][SIZE];	
   } 
   Maze;
 
+  typedef struct Stack {
+    short properties [STACK_OFFSET];
+    Cell * the_stack [STACKSIZE];
+  } 
+  Stack;
+  
   // Node Functions
 Cell * new_Cell (const short i, const short j);
 void delete_Cell (Cell ** npp);
