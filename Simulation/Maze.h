@@ -1,7 +1,7 @@
 #ifndef Maze_h
 #define Maze_h
 
-#define SIZE 16			// Size of one dimention of Map
+#define SIZE 16			// Size of one dimension of Map
 #define TRUE 1
 #define FALSE 0
 // Directions
