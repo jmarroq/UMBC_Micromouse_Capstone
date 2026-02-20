@@ -44,7 +44,7 @@ Cell * new_Cell (const short i, const short j) {
     /* Allocate a new Node for each coord of maze */
     for (i = 0; i < SIZE; ++i) 
       for (j = 0; j < SIZE; ++j) 
-        MAPIJ = new_Node (i, j);
+        MAPIJ = new_Cell (i, j);
   
     /* setting the neighbors ptrs... must be done after all cells allocated */
     for (i = 0; i < SIZE; i++)
@@ -67,7 +67,7 @@ Cell * new_Cell (const short i, const short j) {
     short i, j;
     for (i = 0; i < SIZE; i++) 
       for (j = 0; j < SIZE; j++) 
-        delete_Node (&((*mpp)->map[i][j])); 
+        delete_Cell (&((*mpp)->map[i][j])); 
       
     free(*mpp);
     *mpp = 0;
@@ -195,16 +195,16 @@ Cell * new_Cell (const short i, const short j) {
     /* A NULL neighbor represents a wall.
           if neighbor is accessible, push it onto stack! */
     if (LEFT != NULL && LEFT->right != NULL) 
-      push (this_stack, LEFT);
+      push(this_stack, LEFT);
   
     if (RIGHT != NULL && RIGHT->left != NULL) 
-      push (this_stack, RIGHT);
+      push(this_stack, RIGHT);
   
     if (UP != NULL && UP->down != NULL) 
-      push (this_stack, UP);
+      push(this_stack, UP);
   
     if (DOWN != NULL && DOWN->up != NULL) 
-      push (this_stack, DOWN);
+      push(this_stack, DOWN);
   
   }
   
