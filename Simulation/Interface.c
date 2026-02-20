@@ -144,6 +144,6 @@ void iface_execute_step(Pose* pose, int target_dir) {
   int ok = move_forward_and_update_pose(pose);
 
   // If crashed, we do NOT update pose. Marking the wall + reflood
-  if (!ok) {
+  
     
 }
