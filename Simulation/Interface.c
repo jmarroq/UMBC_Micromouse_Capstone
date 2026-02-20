@@ -19,7 +19,7 @@ static inline int turn_back_dir(int d)  { return (d + 2) & 3; }
 static inline int I_from_Y(int y) { return (SIZE - 1) - y; }
 static inline int J_from_X(int x) { return x; }
 
-static inline Node* node_at(Maze* m, int x, int y) {
+static inline Cell* node_at(Maze* m, int x, int y) {
   return m->map[I_from_Y(y)][J_from_X(x)];
 }
 
@@ -28,7 +28,7 @@ static inline Node* node_at(Maze* m, int x, int y) {
 // This wrapper updates both the current cell and the neighbor cell.
 
 static void set_wall_bidir(Maze* m, int x, int y, int dir_abs) {
-  Node* a = node_at(m, x, y);
+  Cell* a = node_at(m, x, y);
   if (!a) return;
 
   switch (dir_abs) {
@@ -36,7 +36,7 @@ static void set_wall_bidir(Maze* m, int x, int y, int dir_abs) {
       // wall between (x,y) and (x,y+1)
       set_wall(a, NORTH);
       if (y + 1 < SIZE) {
-        Node* b = node_at(m, x, y + 1);
+        Cell* b = node_at(m, x, y + 1);
         if (b) set_wall(b, SOUTH);
       }
       API_setWall(x, y, 'n'); // visualization in MMS
@@ -45,7 +45,7 @@ static void set_wall_bidir(Maze* m, int x, int y, int dir_abs) {
     case EAST: {
       set_wall(a, EAST);
       if (x + 1 < SIZE) {
-        Node* b = node_at(m, x + 1, y);
+        Cell* b = node_at(m, x + 1, y);
         if (b) set_wall(b, WEST);
       }
       API_setWall(x, y, 'e');
@@ -54,7 +54,7 @@ static void set_wall_bidir(Maze* m, int x, int y, int dir_abs) {
     case SOUTH: {
       set_wall(a, SOUTH);
       if (y - 1 >= 0) {
-        Node* b = node_at(m, x, y - 1);
+        Cell* b = node_at(m, x, y - 1);
         if (b) set_wall(b, NORTH);
       }
       API_setWall(x, y, 's');
@@ -63,7 +63,7 @@ static void set_wall_bidir(Maze* m, int x, int y, int dir_abs) {
     case WEST: {
       set_wall(a, WEST);
       if (x - 1 >= 0) {
-        Node* b = node_at(m, x - 1, y);
+        Cell* b = node_at(m, x - 1, y);
         if (b) set_wall(b, EAST);
       }
       API_setWall(x, y, 'w');
@@ -107,19 +107,19 @@ void iface_sense_and_update(Maze* maze, const Pose* pose) {
   if (wr) set_wall_bidir(maze, pose->x, pose->y, turn_right_dir(pose->heading));
 
   // Mark visited your internal map
-  Node* cur = node_at(maze, pose->x, pose->y);
+  Cell* cur = node_at(maze, pose->x, pose->y);
   set_visited(cur);
 
 }
 
 void iface_reflood_from_current(Maze* maze, const Pose* pose, int reflood_flag) {
-  Node* cur = node_at(maze, pose->x, pose->y);
+  Cell* cur = node_at(maze, pose->x, pose->y);
 
   Stack* s = new_Stack();
   push(s, cur);
 
   while (!is_empty_Stack(s)) {
-    Node* n = NULL;
+    Cell* n = NULL;
     pop(s, &n);
     if (n) {
       flood_fill(n, s, (short)reflood_flag);
@@ -131,7 +131,7 @@ void iface_reflood_from_current(Maze* maze, const Pose* pose, int reflood_flag) 
 
 
 int iface_choose_next_dir(Maze* maze, const Pose* pose) {
-  Node* cur = node_at(maze, pose->x, pose->y);
+  Cell* cur = node_at(maze, pose->x, pose->y);
 
   // Prefer continuing forward (pose->heading)
   return (int)get_smallest_neighbor_dir(cur, (short)pose->heading);
@@ -145,8 +145,5 @@ void iface_execute_step(Pose* pose, int target_dir) {
 
   // If crashed, we do NOT update pose. Marking the wall + reflood
   if (!ok) {
-    // Optional debug
-    // fprintf(stderr, "Bump! wall ahead at (%d,%d) heading=%d\n",
-    //         pose->x, pose->y, pose->heading);
-  }
+    
 }
