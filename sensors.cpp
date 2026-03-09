@@ -37,13 +37,10 @@ Sensors::Sensors(uint8_t mux_addr)
 bool Sensors::begin() {
   Wire.begin();
 
-  // Adafruit driver expects device at 0x29 on the selected channel.
-  Adafruit_VL6180X vl;
-  
  // Initialize each sensor through its mux channel.
   for (uint8_t ch : {CH_LEFT, CH_FRONT, CH_RIGHT}) {
     if (!muxSelect(_mux_addr, ch)) return false;
-    if (!vl.begin()) return false;
+    if (!_vl.begin()) return false;
   }
 
   // Schedule first update immediately
@@ -59,8 +56,8 @@ bool Sensors::readOne(uint8_t mux_channel, uint16_t& mm_out, bool& valid_out) {
   }
 
   Adafruit_VL6180X vl;
-  uint8_t range = vl.readRange();
-  uint8_t status = vl.readRangeStatus();
+  uint8_t range = _vl.readRange();
+  uint8_t status = _vl.readRangeStatus();
 
   // Treat "no error" as valid
   valid_out = (status == VL6180X_ERROR_NONE);
