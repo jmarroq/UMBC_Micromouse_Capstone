@@ -62,7 +62,7 @@ bool Sensors::begin() {
     Serial.print(ch);
     Serial.println(" OK");
     delay(10);
-  }a
+  }
 
   _next_due_ms = millis();
   Serial.println("Sensors.begin success");
@@ -78,7 +78,8 @@ bool Sensors::readOne(uint8_t mux_channel, uint16_t& mm_out, bool& valid_out) {
     return false;
   }
 
-  delay(2);
+  // delay(2);
+  delayMicroseconds(500);
 
   uint8_t range = _vl.readRange();
   uint8_t status = _vl.readRangeStatus();

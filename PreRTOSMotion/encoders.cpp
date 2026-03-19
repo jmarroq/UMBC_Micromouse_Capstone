@@ -15,12 +15,19 @@ volatile long right_ticks = 0;
 
 /* ================= ISR ================= */
 
+// encoders.cpp — replace the ISRs with quadrature direction sensing
 void leftEncoderISR() {
-  left_ticks++;
+  if (digitalReadFast(ENC_L_B))
+    left_ticks--;
+  else
+    left_ticks++;
 }
 
 void rightEncoderISR() {
-  right_ticks++;
+  if (digitalReadFast(ENC_R_B))
+    right_ticks++;   // note: right is inverted relative to left (motors face opposite)
+  else
+    right_ticks--;
 }
 
 /* ================= INIT ================= */
@@ -51,4 +58,11 @@ long getRightTicks() {
   long t = right_ticks;
   interrupts();
   return t;
+}
+
+void resetEncoders() {
+  noInterrupts();
+  left_ticks = 0;
+  right_ticks = 0;
+  interrupts();
 }

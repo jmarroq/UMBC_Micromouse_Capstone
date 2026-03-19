@@ -14,6 +14,9 @@ static SensorData_t sensor_data;
 static SensorID_t current_sensor = SENSOR_FRONT;
 static uint8_t phase = 0;  // 0=enable, 1=wait, 2=read
 static uint32_t last_tick = 0;
+static uint8_t cycles_since_reset = 0;
+static SensorData_t committed_frame = {0};
+static uint8_t frame_ready = 0
 
 
 // Internal helper functions (drivers)
@@ -74,29 +77,38 @@ void Sensors_Init(void) {
 
 void Sensors_Update(void) {
     uint32_t now = HAL_GetTick();
-
     switch (phase) {
-        case 0: // enable current sensor
+        case 0:
             EnableEmitter(current_sensor);
             last_tick = now;
             phase = 1;
             break;
-
-        case 1: // wait for stabilization
+        case 1:
             if (now - last_tick >= 5) phase = 2;
             break;
-
-        case 2: // read and disable
+        case 2:
             sensor_data.sensors[current_sensor].raw_value = ReadADC(current_sensor);
             DisableEmitter(current_sensor);
-
             float dist = ConvertToDistance(sensor_data.sensors[current_sensor].raw_value);
             sensor_data.sensors[current_sensor].distance_cm = ApplyAverage(current_sensor, dist);
 
-            current_sensor = (current_sensor + 1) % SENSOR_COUNT;
+            current_sensor = (SensorID_t)((current_sensor + 1) % SENSOR_COUNT);
+
+            // Only mark frame ready after a full sweep of all sensors
+            if (current_sensor == SENSOR_FRONT) {
+                committed_frame = sensor_data;
+                frame_ready = 1;
+            }
             phase = 0;
             break;
     }
+}
+
+uint8_t Sensors_FrameReady(void) { return frame_ready; }
+
+SensorData_t Sensors_GetFrame(void) {
+    frame_ready = 0;         // consumer clears the flag
+    return committed_frame;  // returns last fully-committed snapshot
 }
 
 SensorData_t Sensors_GetData(void) {

@@ -52,14 +52,14 @@ void setMotor(int left_pwm, int right_pwm) {
 
   analogWrite(PWMA, constrain(left_pwm, 0, 255));
   analogWrite(PWMB, constrain(right_pwm, 0, 255));
-  Serial.print("setMotor L=");
-  Serial.print(left_pwm);
-  Serial.print(" R=");
-  Serial.println(right_pwm);
+  // Serial.print("setMotor L=");
+  // Serial.print(left_pwm);
+  // Serial.print(" R=");
+  // Serial.println(right_pwm);
 }
 
 void stopMotors() {
   analogWrite(PWMA, 0);
   analogWrite(PWMB, 0);
-  Serial.println("stopMotors");
+  // Serial.println("stopMotors");
 }
