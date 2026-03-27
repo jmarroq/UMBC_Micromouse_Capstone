@@ -1,9 +1,9 @@
 #include "Sensors.h"
 #include <Wire.h>
 
-static constexpr uint8_t CH_LEFT  = 0;
-static constexpr uint8_t CH_FRONT = 3;
-static constexpr uint8_t CH_RIGHT = 6;
+static constexpr uint8_t CH_LEFT  = 1;
+static constexpr uint8_t CH_FRONT = 0;
+static constexpr uint8_t CH_RIGHT = 7;
 
 static constexpr uint16_t INIT_FAR_MM = 255;
 
@@ -86,6 +86,16 @@ bool Sensors::readOne(uint8_t mux_channel, uint16_t& mm_out, bool& valid_out) {
   valid_out = (status == VL6180X_ERROR_NONE);
   mm_out = (uint16_t)range;
 
+  // Per-read debug
+  Serial.print("CH ");
+  Serial.print(mux_channel);
+  Serial.print(" | range=");
+  Serial.print(mm_out);
+  Serial.print(" mm | status=");
+  Serial.print(status);
+  Serial.print(" | valid=");
+  Serial.println(valid_out ? "YES" : "NO");
+
   return true;
 }
 
@@ -122,6 +132,21 @@ bool Sensors::update20ms() {
   }
 
   _latest.t_ms = now;
+
+  // Summary debug once per update
+  Serial.print("[SENSORS t=");
+  Serial.print(_latest.t_ms);
+  Serial.print("] L=");
+  if (_latest.left_valid) Serial.print(_latest.left_mm);
+  else Serial.print("X");
+  Serial.print("  F=");
+  if (_latest.front_valid) Serial.print(_latest.front_mm);
+  else Serial.print("X");
+  Serial.print("  R=");
+  if (_latest.right_valid) Serial.print(_latest.right_mm);
+  else Serial.print("X");
+  Serial.println();
+
   return true;
 }
 

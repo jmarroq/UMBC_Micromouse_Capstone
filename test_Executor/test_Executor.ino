@@ -3,41 +3,37 @@
 #include "Sensors.h"
 #include "perception.h"
 #include "robot_state.h"
+#include "planner_interface.h"
 #include "executor.h"
 #include "encoders.h"
 #include "motors.h"
 
-/* ================= GLOBALS ================= */
+/* ================= GLOBAL OBJECTS ================= */
 
 Sensors sensors;
 
-/* ================= TEST STATE ================= */
+/* ================= LOCAL FLAGS ================= */
 
-enum TestState {
-  TEST_START_FORWARD,
-  TEST_WAIT_FORWARD_DONE,
-  TEST_START_TURN_AROUND_STEP,
-  TEST_WAIT_TURN_AROUND_STEP_DONE,
-  TEST_FINISHED
-};
-
-static TestState testState = TEST_START_FORWARD;
+static bool haveSensorFrame = false;
 
 /* ================= SETUP ================= */
 
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  Serial.println("Boot");
+  Serial.println("Micromouse boot");
 
   motorsInit();
   encodersInit();
   robotStateInit(robotState);
+  plannerInit();
   executorInit();
 
   if (!sensors.begin()) {
-    Serial.println("Sensors begin failed");
-    while (1) { delay(100); }
+    Serial.println("ERROR: sensors.begin() failed");
+    while (1) {
+      delay(100);
+    }
   }
 
   Serial.println("Setup complete");
@@ -46,17 +42,19 @@ void setup() {
 /* ================= LOOP ================= */
 
 void loop() {
-  /* ---------- Update sensing ---------- */
+  /* ---------- Update sensors / perception ---------- */
   if (sensors.update20ms()) {
     sensors.getLatest(robotState.sensorFrame);
     robotState.perceptionFrame = computePerception(robotState.sensorFrame);
+    haveSensorFrame = true;
 
-    Serial.print("SENS L=");
+    Serial.print("SENS  L=");
     Serial.print(robotState.sensorFrame.left_mm);
     Serial.print(" F=");
     Serial.print(robotState.sensorFrame.front_mm);
     Serial.print(" R=");
     Serial.print(robotState.sensorFrame.right_mm);
+
     Serial.print(" | WL=");
     Serial.print(robotState.perceptionFrame.wall_left);
     Serial.print(" WF=");
@@ -65,58 +63,18 @@ void loop() {
     Serial.println(robotState.perceptionFrame.wall_right);
   }
 
-  /* ---------- Test harness ---------- */
-  switch (testState) {
-    case TEST_START_FORWARD:
-      if (executorGetCurrentPrimitive() == PRIM_IDLE && !executorDone()) {
-        Serial.println("TEST: begin step toward NORTH");
-        executorBeginStep(DIR_NORTH);   // heading starts NORTH, so this should just go forward
-        testState = TEST_WAIT_FORWARD_DONE;
-      }
-      break;
+  /* ---------- Plan next step when executor is idle ---------- */
+  if (haveSensorFrame && executorGetCurrentPrimitive() == PRIM_IDLE) {
+    plannerUpdateCurrentCell();
 
-    case TEST_WAIT_FORWARD_DONE:
-      if (executorDone()) {
-        Serial.print("TEST: forward done, pose = (");
-        Serial.print(robotState.x);
-        Serial.print(", ");
-        Serial.print(robotState.y);
-        Serial.print("), heading = ");
-        Serial.println((int)robotState.heading);
+    Direction nextDir = plannerChooseNextDirection();
 
-        testState = TEST_START_TURN_AROUND_STEP;
-      }
-      break;
+    Serial.print("PLAN nextDir = ");
+    Serial.println((int)nextDir);
 
-    case TEST_START_TURN_AROUND_STEP:
-      if (executorGetCurrentPrimitive() == PRIM_IDLE) {
-        Serial.println("TEST: begin step toward SOUTH");
-        executorBeginStep(DIR_SOUTH);   // from NORTH, should turn around then go forward
-        testState = TEST_WAIT_TURN_AROUND_STEP_DONE;
-      }
-      break;
-
-    case TEST_WAIT_TURN_AROUND_STEP_DONE:
-      if (executorDone()) {
-        Serial.print("TEST: turn-around step done, pose = (");
-        Serial.print(robotState.x);
-        Serial.print(", ");
-        Serial.print(robotState.y);
-        Serial.print("), heading = ");
-        Serial.println((int)robotState.heading);
-
-        testState = TEST_FINISHED;
-      }
-      break;
-
-    case TEST_FINISHED:
-      stopMotors();
-      break;
-
-    default:
-      break;
+    executorBeginStep(nextDir);
   }
 
-  /* ---------- Always update executor ---------- */
+  /* ---------- Always advance active step ---------- */
   executorUpdate();
 }
