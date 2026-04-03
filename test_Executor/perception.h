@@ -4,9 +4,9 @@
 
 
 // Internal thresholds 
-static constexpr uint16_t LEFT_THRESHOLD_MM  = 70;
+static constexpr uint16_t LEFT_THRESHOLD_MM  = 90;
 static constexpr uint16_t FRONT_THRESHOLD_MM = 90;
-static constexpr uint16_t RIGHT_THRESHOLD_MM = 70;
+static constexpr uint16_t RIGHT_THRESHOLD_MM = 90;
 
 // Output (robot-relative)
 struct PerceptionFrame {

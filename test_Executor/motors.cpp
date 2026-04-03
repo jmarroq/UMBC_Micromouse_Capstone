@@ -1,18 +1,18 @@
-#include "motors.h"
+  #include "motors.h"
 
 /* ================= MOTOR PINS ================= */
 
 // Left motor
-#define PWMA 2
-#define AIN1 4
-#define AIN2 3
+#define PWMA 0
+#define AIN1 1
+#define AIN2 2
 
 // Right motor
-#define PWMB 8
-#define BIN1 6
-#define BIN2 7
+#define PWMB 6
+#define BIN1 4
+#define BIN2 5
 
-#define STBY 5
+#define STBY 3
 
 void motorsInit() {
   pinMode(PWMA, OUTPUT);
